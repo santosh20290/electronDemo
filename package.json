@@ -1,0 +1,47 @@
+{
+  "name": "gstHero",
+  "version": "1.0.0",
+  "description": "Master Electron Project",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "watch": "nodemon --exec 'electron .'",
+    "reset": "git reset --hard"
+  },
+  "repository": "https://github.com/santosh20290/master-electron",
+  "homepage": "https://github.com/santosh20290/master-electron",
+  "keywords": [
+    "Electron",
+    "Master Electron",
+    "demo"
+  ],
+  "author": "Santosh Thakur <santosh.thakur@perennialsys.com>",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^5.0.0",
+    "electron-builder": "^22.5.1",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "electron-dl": "^3.0.0",
+    "electron-window-state": "^5.0.3",
+    "puppeteer": "^3.0.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
+  },
+  "build": {
+    "appId": "com.perennialsys.gstHero",
+    "copyright": "Copyright 2020 Perennial system",
+    "linux": {
+      "category": "Utility"
+    },
+    "mac": {
+      "category" : "public.app-category.utilities",
+      "target" : "dmg"
+    },
+    "win": {
+      "target" : "zip"
+    }
+  }
+}
