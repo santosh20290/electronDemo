@@ -8,8 +8,8 @@
     "watch": "nodemon --exec 'electron .'",
     "reset": "git reset --hard"
   },
-  "repository": "https://github.com/santosh20290/master-electron",
-  "homepage": "https://github.com/santosh20290/master-electron",
+  "repository": "https://github.com/santosh20290/electronDemo",
+  "homepage": "https://github.com/santosh20290/electronDemo",
   "keywords": [
     "Electron",
     "Master Electron",
