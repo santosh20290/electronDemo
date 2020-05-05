@@ -6,13 +6,14 @@
   "scripts": {
     "start": "electron .",
     "watch": "nodemon --exec 'electron .'",
-    "reset": "git reset --hard"
+    "reset": "git reset --hard",
+    "pack": "build --dir",
+    "dist": "build"
   },
   "repository": "https://github.com/santosh20290/electronDemo",
   "homepage": "https://github.com/santosh20290/electronDemo",
   "keywords": [
     "Electron",
-    "Master Electron",
     "demo"
   ],
   "author": "Santosh Thakur <santosh.thakur@perennialsys.com>",
@@ -32,9 +33,16 @@
   },
   "build": {
     "appId": "com.perennialsys.gstHero",
+    "protocols": {
+      "name": "electron-deep-linking",
+      "schemes": [
+        "myapp"
+      ]
+    },
     "copyright": "Copyright 2020 Perennial system",
     "linux": {
-      "category": "Utility"
+      "category": "Utility",
+      "target": "deb"
     },
     "mac": {
       "category" : "public.app-category.utilities",

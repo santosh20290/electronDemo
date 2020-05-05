@@ -7,7 +7,41 @@ const $ = require('cheerio');
 const common = require('./common');
 const {download} = require('electron-dl');
 
-const url = 'https://services.gst.gov.in/services/login';
+// Module with utilities for working with file and directory paths.
+const path = require('path')
+// Module with utilities for URL resolution and parsing.
+const url = require('url')
+
+// const url = 'https://services.gst.gov.in/services/login';
+
+// Force Single Instance Application
+const gotTheLock = app.requestSingleInstanceLock()
+if (gotTheLock) {
+    app.on('second-instance', (e, argv) => {
+        // Someone tried to run a second instance, we should focus our window.
+
+        // Protocol handler for win32
+        // argv: An array of the second instance’s (command line / deep linked) arguments
+        console.log("platform===========" + process.platform)
+        console.log("argv===========" + argv.slice(1))
+        if (process.platform == 'win32' || process.platform == 'linux') {
+            // Keep only command line / deep linked arguments
+            deeplinkingUrl = argv.slice(1)
+        }
+        logEverywhere('app.makeSingleInstance# ' + deeplinkingUrl)
+
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore()
+            mainWindow.focus()
+        }
+    })
+} else {
+    app.quit()
+    return
+}
+
+// Deep linked url
+let deeplinkingUrl;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -110,7 +144,6 @@ ipcMain.on('download-pdf', async (e, userName, gstnPassword, captchaValue, retur
     });
 });
 
-
 ipcMain.on('login-success', async (e) => {
     await mainWindow.loadFile('renderer/startbootstrap-sb-admin-2-gh-pages/index.html')
 });
@@ -137,13 +170,29 @@ function createWindow () {
     })
 
     // Load index.html into the new BrowserWindow
-    mainWindow.loadFile('renderer/startbootstrap-sb-admin-2-gh-pages/login.html')
+    // mainWindow.loadFile('renderer/startbootstrap-sb-admin-2-gh-pages/login.html')
+
+    // and load the index.html of the app.
+    mainWindow.loadURL(
+        url.format({
+            pathname: path.join(__dirname, 'renderer/startbootstrap-sb-admin-2-gh-pages/login.html'),
+            protocol: 'file:',
+            slashes: true
+        })
+    )
 
     // Manage new window state
     state.manage(mainWindow)
 
     // Open DevTools - Remove for PRODUCTION!
     mainWindow.webContents.openDevTools();
+
+    // Protocol handler for win32
+    if (process.platform == 'win32' || process.plateform == "linux") {
+        // Keep only command line / deep linked arguments
+        deeplinkingUrl = process.argv.slice(1)
+    }
+    logEverywhere('createWindow# ' + deeplinkingUrl)
 
     //open headless browser here
     browser = common.openBrowser();
@@ -162,7 +211,29 @@ app.on('activate', () => {
     if (mainWindow === null) createWindow()
 })
 
+if (!app.isDefaultProtocolClient('myapp')) {
+    // Define custom protocol handler. Deep linking works on packaged versions of the application!
+    app.setAsDefaultProtocolClient('myapp')
+}
+
 // Quit when all windows are closed - (Not macOS - Darwin)
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
+
+app.on('will-finish-launching', function() {
+    // Protocol handler for osx
+    app.on('open-url', function(event, url) {
+        event.preventDefault()
+        deeplinkingUrl = url
+        logEverywhere('open-url# ' + deeplinkingUrl)
+    })
+})
+
+// Log both at dev console and at running node console instance
+function logEverywhere(s) {
+    console.log(s)
+    if (mainWindow && mainWindow.webContents) {
+        mainWindow.webContents.executeJavaScript(`console.log("${s}")`)
+    }
+}
