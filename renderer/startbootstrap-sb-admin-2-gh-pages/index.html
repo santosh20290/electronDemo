@@ -353,9 +353,10 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">JSON</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Download JSON</h1>
                     <select id="returnPeriod" style="width: 200px" class="form-control form-control-sm d-sm-inline-block">
                         <option value="">Select Return Period</option>
+                        <option value="032020">March 2020</option>
                         <option value="012020">January 2020</option>
                         <option value="122019">December 2019</option>
                         <option value="112019">November 2019</option>
@@ -377,7 +378,7 @@
                                     <div class="col mr-2">
                                         <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">GSTR-1</div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr1', this)">
+                                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr1', this, 'downloadgstr1JSON')">
                                                 <i class="fas fa-download fa-sm text-white-50"></i> Download JSON
                                             </button>
                                         </div>
@@ -395,7 +396,7 @@
                                     <div class="col mr-2">
                                         <div class="text-lg font-weight-bold text-success text-uppercase mb-1">GSTR-2A</div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr2a', this)">
+                                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr2a', this,'downloadgstr2aExcel')">
                                                 <i class="fas fa-download fa-sm text-white-50"></i> Download Excel
                                             </button>
                                         </div>
@@ -415,7 +416,7 @@
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
                                                 <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr3b', this)">
+                                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('gstr3b', this, 'downloadgstr3bPdf')">
                                                         <i class="fas fa-download fa-sm text-white-50"></i> Download PDF
                                                     </button>
                                                 </div>
@@ -436,7 +437,7 @@
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
                                                 <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('cashLedger', this)">
+                                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm download-json" onclick="getCaptcha('cashLedger', this,'table')">
                                                         <i class="fas fa-download fa-sm text-white-50"></i> Fetch Table Details
                                                     </button>
                                                 </div>
@@ -448,6 +449,29 @@
                         </div>
                     </div>
 
+                </div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Upload JSON</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-3">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">GSTR-1</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onclick="getCaptcha('gstr1', this,'uploadGstr1JSON')">
+                                                <i class="fas fa-download fa-sm text-white-50"></i> Upload JSON
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Page Heading -->
@@ -541,13 +565,13 @@
                         <label class="required" for="userName">
                             GSTN Portal User name
                         </label>
-                        <input type="text" class="form-control" id="userName" name="userName" value="shreemahalaxmia"
+                        <input type="text" class="form-control" id="userName" name="userName" value=""
                                placeholder="Enter userName">
                     </div>
                     <div class="form-group">
                         <label class="required" for="gstnPassword">GSTN Portal Password</label>
-                        <input type="password" class="form-control" id="gstnPassword" name="gstnPassword" value="Girme@2015"
-                               placeholder="Password">
+                        <input type="password" class="form-control" id="gstnPassword" name="gstnPassword"
+                               value="" placeholder="Password">
                     </div>
                     <div class="form-group">
                         <img id="captcha" src="" alt="captcha" />

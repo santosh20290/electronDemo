@@ -89,6 +89,22 @@ ipcMain.on('download-json', (e,userName, gstnPassword, captchaValue, returnPerio
     });
 });
 
+//upload JSON
+ipcMain.on('upload-json', (e, userName, gstnPassword, captchaValue, returnPeriod, returnType) => {
+    console.log("in main.js :- set-captcha call");
+    const response = browser.then(page => {
+        common.uploadJSON(page, userName, gstnPassword, captchaValue, returnPeriod, returnType)
+            .then(res => {
+                console.log(res);
+                e.sender.send('upload-json-success', res);
+            })
+            .catch(err => {
+                console.log(err);
+                e.sender.send('upload-json-error', err);
+            })
+    });
+});
+
 //Download excel
 ipcMain.on('download-excel', (e,userName, gstnPassword, captchaValue, returnPeriod, returnType) => {
     console.log("in main.js :- set-captcha call");

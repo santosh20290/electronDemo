@@ -3,6 +3,7 @@
  */
 
 const puppeteer = require('puppeteer');
+const {app} = require('electron');
 
 module.exports = {
 
@@ -20,7 +21,7 @@ module.exports = {
                             args: [
                               '--disable-web-security',
                             ],
-                            headless: true
+                            headless: false
                           });
     const page = await browser.newPage();
     return page;
@@ -110,7 +111,121 @@ module.exports = {
       }
     }, {returnPeriod, returnType});
   },
+    uploadJSON: async function(page, userName, gstnPassword, captchaValue, returnPeriod, returnType){
+        await page.waitForSelector('#username');          // wait for the selector to load
+        await page.keyboard.press('Backspace');
+        const username = await page.$('#username');        // declare a variable with an ElementHandle
+        username.type(userName);
+        await page.waitFor(1000);
+        await page.waitForSelector('#user_pass');          // wait for the selector to load
+        const password = await page.$('#user_pass');        // declare a variable with an ElementHandle
+        password.type(gstnPassword);
+        await page.waitFor(1000);
+        await page.waitForSelector('#captcha');          // wait for the selector to load
+        const captcha = await page.$('#captcha');        // declare a variable with an ElementHandle
+        captcha.type(captchaValue);
+        await page.waitFor(1000);
+        await page.waitForSelector('body > div.content-wrapper > div.container > div > div.content-pane > div > div > div > div > div > form > div:nth-child(6) > div > button');          // wait for the selector to load
+        // const loginBtn = await page.$('body > div.content-wrapper > div.container > div > div.content-pane > div > div > div > div > div > form > div:nth-child(6) > div > button');        // declare a variable with an ElementHandle
+        // loginBtn.click();
 
+        await Promise.all([
+            page.click("body > div.content-wrapper > div.container > div > div.content-pane > div > div > div > div > div > form > div:nth-child(6) > div > button"),
+            page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        ]);
+
+        // await page.waitForNavigation();
+
+        // await page.once('load', () => console.log('Page loaded!'));
+        await page.waitFor(3000);
+        await page.evaluate(() => {
+            document.querySelector(`button span[title="Return Dashboard"]`).click();
+        });
+
+        await page.waitForNavigation({ waitUntil: 'networkidle0' })
+        await page.waitFor(3000);
+        //
+        await page.evaluate(() => {
+            let objSelect = document.getElementsByName("fin")[0];
+            setSelectedValue(objSelect, "${year}");
+            function setSelectedValue(selectObj, valueToSet) {
+                console.log("valueToSet" + valueToSet);
+                for (let i = 0; i < selectObj.options.length; i++) {
+                    console.log("dropdown Text = " + selectObj.options[i].text);
+                    if (selectObj.options[i].text == valueToSet) {
+                        console.log("dropdown value and given value matched");
+                        selectObj.options[i].selected = true;
+                        return;
+                    }
+                }
+            }
+            let event = new Event('change');
+            // Dispatch it.
+            objSelect.dispatchEvent(event);
+        })
+
+        await page.waitFor(3000);
+
+        await page.evaluate(() => {
+            let objSelect1 = document.getElementsByName("mon")[0];
+            setSelectedValue1(objSelect1, "${month}");
+            function setSelectedValue1(selectObj1, valueToSet1) {
+                console.log("valueToSet1 = " + valueToSet1);
+                for (let i = 0; i < selectObj1.options.length; i++) {
+                    console.log("dropdown Text = " + selectObj1.options[i].text);
+                    if (selectObj1.options[i].text == valueToSet1) {
+                        console.log("dropdown value and given value matched");
+                        selectObj1.options[i].selected = true;
+                        return;
+                    }
+                }
+            }
+            let event1 = new Event('change');
+            objSelect1.dispatchEvent(event1);
+        })
+
+        await page.waitFor(5000);
+
+        await page.evaluate(() => {
+            document.querySelector('.srchbtn').click();
+        })
+
+        await page.waitFor(5000);
+
+        await page.evaluate(() => {
+            function getElementByXpath(path) {
+                return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            }
+            let processOfflineBtn = getElementByXpath('(//BUTTON[@class="btn btn-primary pull-right"][text()="Prepare offline"][text()="Prepare offline"])[1]');
+            console.log("processOfflineBtn==>>"+processOfflineBtn);
+            processOfflineBtn.click();
+        })
+
+        await page.waitFor(5000);
+        // get the ElementHandle of the selector above
+        const inputUploadHandle = await page.$('#offline_file');
+        let fileToUpload = app.getPath('downloads') + '/27BARPD3204R1ZB_GSTR2A_JSON_032020.json';
+        console.log("fileToUpload===>>" + fileToUpload);
+
+        // Sets the value of the file input to fileToUpload
+        await inputUploadHandle.uploadFile(fileToUpload);
+
+        await page.waitFor(5000);
+
+        return page.evaluate(async ({returnPeriod, returnType}) => {
+            console.log("inside");
+            https://return.gst.gov.in/returns/auth/api/offline/upload/summary?rtn_prd=032020&rtn_typ=GSTR1
+            console.log(`https://return.gst.gov.in/returns/auth/api/offline/upload/summary?rtn_prd=${returnPeriod}&rtn_typ=${returnType}`)
+            return Promise.resolve(
+                await fetch(`https://return.gst.gov.in/returns/auth/api/offline/upload/summary?rtn_prd=${returnPeriod}&rtn_typ=${returnType.toUpperCase()}`)
+                    .then(res => res.text())
+                    .then(data => {
+                        console.log(data);
+                        return data;
+                    })
+            )
+        }, {returnPeriod, returnType});
+    },
   downloadExcel: async function(page, userName, gstnPassword, captchaValue, returnPeriod, returnType){
     await page.waitForSelector('#username');          // wait for the selector to load
     await page.keyboard.press('Backspace');
